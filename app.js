@@ -37,6 +37,12 @@ app.route('/new').get(function(req,res){
 	});
 });
 
+app.route('login').get(function(req,res){
+
+}).post(function(req,res){
+
+});
+
 app.get('/chat/:id', function(req,res){
 	User.findById({_id:req.params.id}).exec(function(error,user){
 		res.render('./index', {
@@ -49,7 +55,7 @@ app.get('/chat/:id', function(req,res){
 serverChat.on('connection', function(socket){
 	socket.emit('start chatting', {message: 'Welcome to my world'});
 	socket.on('chat messages', function(data){
-		serverChat.emit('server messages', {message: data.message, user: data.user});
+		serverChat.emit('server messages', {message: data.message, user: data.user, id: socket.id});
 	});
 });
 

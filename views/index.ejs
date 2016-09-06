@@ -40,7 +40,11 @@
 			$('#messages').append($('<li>').text('Admin: ' + data.message));
 		});
 		socket.on('server messages', function(data){
-			$('#messages').append($('<li>').text(data.user + ': ' + data.message));
+			var user = '';
+			alert($('#' + data.id).prev());
+			$('#messages').append($('<li>')
+				.attr('id',data.id)
+				.text(data.user + ': ' + data.message));
 		});
 	</script>
 </body>
