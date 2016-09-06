@@ -1,8 +1,9 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var privateChat = io.of('/chat');
+var serverChat = io.of('/chat');
 var mongoose = require('mongoose');
+var path = require('path');
 var bodyParser = require('body-parser');
 var User = require('./user');
 
@@ -11,12 +12,18 @@ mongoose.connect('mongodb://localhost/brightchat');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 
+app.set('view engine', 'ejs');
+app.engine('ejs', require('ejs').renderFile);
+app.set('views', __dirname + '/views');
+
 app.get('/', function(req,res){
-	res.sendFile(__dirname + '/views/new.html');
+	res.redirect('/new');
 });
 
 app.route('/new').get(function(req,res){
-	res.sendFile(__dirname + '/views/new.html');
+	res.render('./new', {
+		title: 'Welcome new user'
+	});
 }).post(function(req,res){
 	var email = req.body.email;
 	var name = req.body.name;
@@ -24,20 +31,25 @@ app.route('/new').get(function(req,res){
 	var user = new User({email: email, name: name, password: password});
 
 	user.save().then(function(data){
-		res.sendFile(__dirname + '/views/index.html');
+		res.redirect('/chat/' + data._id);
 	}, function(error){
 		res.end('Could not save this user: ' + error);
 	});
 });
 
-app.get('/chat', function(req,res){
-	res.sendFile(__dirname + '/views/index.html');
+app.get('/chat/:id', function(req,res){
+	User.findById({_id:req.params.id}).exec(function(error,user){
+		res.render('./index', {
+			id: req.params.id,
+			name: user.name
+		});
+	});
 });
 
-privateChat.on('connection', function(socket){
-	socket.on('chat messages', function(message){
-		console.log('Socket ' + socket.id + ' message: ' + message);
-		privateChat.emit('server messages', {message: message, user: socket.id});
+serverChat.on('connection', function(socket){
+	socket.emit('start chatting', {message: 'Welcome to my world'});
+	socket.on('chat messages', function(data){
+		serverChat.emit('server messages', {message: data.message, user: data.user});
 	});
 });
 

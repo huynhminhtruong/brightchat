@@ -24,7 +24,7 @@
 	<nav class="navbar navbar-default navbar-fixed-bottom">
 	  <div class="container-fluid">
 	  	<form class="navbar-form navbar-left" role="search" style="width:100%;">
-	  		<input id="message" autocomplete="off" style="width:70%;border:none;" placeholder="Enter your text" /><button>Send</button>
+	  		<input id="message" autocomplete="off" style="width:70%;border:none;" placeholder="Enter your text" /><button id="send" user="<%= name %>">Send</button>
 		</form>
 	  </div>
 	</nav>
@@ -32,9 +32,12 @@
 	<script>
 		var socket = io('/chat');
 		$('form').submit(function(){
-			socket.emit('chat messages', $('#message').val());
+			socket.emit('chat messages', {user: $('#send').attr('user'), message: $('#message').val()});
 			$('#message').val('');
 			return false;
+		});
+		socket.on('start chatting', function(data){
+			$('#messages').append($('<li>').text('Admin: ' + data.message));
 		});
 		socket.on('server messages', function(data){
 			$('#messages').append($('<li>').text(data.user + ': ' + data.message));
