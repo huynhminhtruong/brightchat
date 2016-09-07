@@ -55,7 +55,11 @@ app.get('/chat/:id', function(req,res){
 serverChat.on('connection', function(socket){
 	socket.emit('start chatting', {message: 'Welcome to my world'});
 	socket.on('chat messages', function(data){
-		serverChat.emit('server messages', {message: data.message, user: data.user, id: socket.id});
+		serverChat.emit('server messages', { 
+			message: data.message, 
+			user: data.user, 
+			id: data.id
+		});
 	});
 });
 

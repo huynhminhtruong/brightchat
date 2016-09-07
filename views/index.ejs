@@ -19,12 +19,12 @@
 <body>
 	<h2>Socket.io Chat</h2>
 
-	<ul id="messages"></ul>
+	<ul id="messages" style="list-style-type: none;"></ul>
 
 	<nav class="navbar navbar-default navbar-fixed-bottom">
 	  <div class="container-fluid">
 	  	<form class="navbar-form navbar-left" role="search" style="width:100%;">
-	  		<input id="message" autocomplete="off" style="width:70%;border:none;" placeholder="Enter your text" /><button id="send" user="<%= name %>">Send</button>
+	  		<input id="message" autocomplete="off" style="width:70%;border:none;" placeholder="Enter your text" /><button id="send" user="<%= name %>" value="<%= id %>">Send</button>
 		</form>
 	  </div>
 	</nav>
@@ -32,7 +32,7 @@
 	<script>
 		var socket = io('/chat');
 		$('form').submit(function(){
-			socket.emit('chat messages', {user: $('#send').attr('user'), message: $('#message').val()});
+			socket.emit('chat messages', {user: $('#send').attr('user'), message: $('#message').val(), id: $('#send').attr('value')});
 			$('#message').val('');
 			return false;
 		});
@@ -40,8 +40,6 @@
 			$('#messages').append($('<li>').text('Admin: ' + data.message));
 		});
 		socket.on('server messages', function(data){
-			var user = '';
-			alert($('#' + data.id).prev());
 			$('#messages').append($('<li>')
 				.attr('id',data.id)
 				.text(data.user + ': ' + data.message));
