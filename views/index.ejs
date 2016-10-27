@@ -40,6 +40,12 @@
 			$('#messages').append($('<li>').text('Admin: ' + data.message));
 		});
 		socket.on('server messages', function(data){
+			var li = document.createElement('LI');
+			var image = document.createElement('img');
+
+			li.appendChild(image);
+
+			$('#messages').append(li);
 			$('#messages').append($('<li>')
 				.attr('id',data.id)
 				.text(data.user + ': ' + data.message));

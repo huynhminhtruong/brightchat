@@ -63,6 +63,6 @@ serverChat.on('connection', function(socket){
 	});
 });
 
-http.listen(8080, function(){
-	console.log('Server is running on port ' + 8080);
+http.listen(9000, function(){
+	console.log('Server is running on port ' + 9000);
 });
